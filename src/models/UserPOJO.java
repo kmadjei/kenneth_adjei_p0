@@ -12,6 +12,7 @@ public class UserPOJO {
 	// default constructor
 	public UserPOJO() {}
 	
+	// constructor with parameters
 	public UserPOJO( String firstName, String lastName, String emailID, String password, String bankAccountID) {
 		//super();
 		this.firstName = firstName;

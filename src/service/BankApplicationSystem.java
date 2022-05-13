@@ -24,7 +24,7 @@ public class BankApplicationSystem {
 	static Scanner scanner = new Scanner(System.in);
 	
 	// Presents client with menu options
-	static void processClientChoice() {
+	public static void processClientChoice() {
 		
 		while(true) {
 			
@@ -64,7 +64,7 @@ public class BankApplicationSystem {
 	
 	
 	// Process client registration
-	static void registerClient() {
+	public static void registerClient() {
 		
 		UserPOJO client =  new UserPOJO();
 		
@@ -137,7 +137,7 @@ public class BankApplicationSystem {
 	}
 	
 	// process client login
-	static void loginClient() {
+	public static void loginClient() {
 		
 		System.out.println("****************************************");
 		System.out.println("ACCOUNT LOGIN!");
@@ -148,15 +148,19 @@ public class BankApplicationSystem {
 			
 			try {
 				System.out.println(" Enter user name => ");
-	            String userName = scanner.nextLine();
+	            String email = scanner.nextLine();
 
 	            System.out.println(" Enter password => ");
 	            String password = scanner.nextLine();
 	            
 	            
 	            // Login validation
-	            if ("ramesh".equals(userName) && "password".equals(password)) {
+	            if ("ramesh".equals(email) && "password".equals(password)) {
 	                System.out.println(" User successfully logged-in.. ");
+	                
+	                //String firstName; String lastName, String emailID, String password, String bankAccountID;
+	                
+	                //UserPOJO client = new UserPOJO(firstName, lastName, emailID, password, bankAccountID);
 	                
 	                //Connect credentials to open account menu
 	                break;
@@ -172,7 +176,7 @@ public class BankApplicationSystem {
 	
 	
 	// Terminate program or sign-out
-	static final void exitSystem() {
+	public static final void exitSystem() {
 		System.out.println("****************************************");
 		System.out.println("You have been signed out successfully");
 		System.out.println("Thank you for using Bank Awesome!!");
@@ -190,6 +194,53 @@ public class BankApplicationSystem {
 	
 	
 	// 
-	static 
+	public static void openAccountMenu(UserPOJO user) {
+		
+		while(true) {
+			
+			System.out.println("****************************************");
+			System.out.println("Welcome " + user.getFirstName() + " To Your Client Dashboard Options");
+			System.out.println("****************************************");
+			System.out.println();
+			System.out.println("Please select one of the options below!!");
+			System.out.println("1 --> Check All Balance");
+			System.out.println("2 --> Withdraw From  An Account");
+			System.out.println("3 --> Deposit To Account");
+			System.out.println("4 --> Sign Out");
+			
+			try {
+				int option = Integer.parseInt(scanner.nextLine());
+				
+				switch(option) {
+				case 1:
+					// Check All balance
+					break;
+				case 2:
+					// Withdraw from accounts
+					break;
+				case 3:
+					// Deposit to accounts
+					break;
+				case 4:
+					// Exit system / Signout
+					exitSystem();
+					break;
+				default:
+					System.out.println("\nPlease carefully select the right option.");
+					break;
+				}
+				
+				
+			} catch (Exception e) {
+				System.out.println("\nPlease carefully select the right option.");
+				
+			}
+			
+
+		}
+
+		
+		
+	}
 
 }
