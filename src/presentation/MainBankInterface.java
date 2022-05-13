@@ -10,8 +10,9 @@ public class MainBankInterface {
 	// in the console
 	public static void main(String[] args) {
 		
-		BankApplicationSystem.introduction();
+		//BankApplicationSystem.introduction();
 		
+		BankApplicationSystem.processClientChoice();
 		
 	}
 

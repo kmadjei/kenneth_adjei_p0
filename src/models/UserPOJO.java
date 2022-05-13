@@ -1,22 +1,34 @@
 package models;
 
-import java.util.UUID;
-
 public class UserPOJO {
 	
 	private String firstName;
 	private String lastName;
 	private String emailID;
 	private String password;
-	private String bankID;
+	private String bankAccountID;
+	
+	
+	// default constructor
+	public UserPOJO() {}
+	
+	public UserPOJO( String firstName, String lastName, String emailID, String password, String bankAccountID) {
+		//super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailID = emailID;
+		this.password = password;
+		this.bankAccountID = bankAccountID;
+		
+	}
 
-	public String getBankID() {
-		return bankID;
+	public String getBankAccountID() {
+		return bankAccountID;
 	}
 
 
-	public void setBankID(String bankID) {
-		this.bankID = bankID;
+	public void setBankAccountID(String bankAccountID) {
+		this.bankAccountID = bankAccountID;
 	}
 
 	public String getFirstName() {
@@ -53,20 +65,13 @@ public class UserPOJO {
 		return password;
 	}
 
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-
-	public String createUniqueID() {
-	    String uniqueID = UUID.randomUUID().toString();
-	    return uniqueID;
-	}
-	
 	@Override
 	public String toString() {
-		return "ClientPOJO [firstName=  " + firstName + ", lastName= " + lastName + ", emailID=" 
+		return "ClientPOJO [firstName=  " + firstName + ", lastName= " + lastName + ", emailID= " 
 				+ emailID + "]";
 	}
 	

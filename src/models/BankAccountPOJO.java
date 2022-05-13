@@ -2,7 +2,8 @@ package models;
 
 public class BankAccountPOJO {
 
-	private String firstName;
-	private String lastName;
+	private String bankAccountID;
+	private int accountNumber;
+	private double balance;
 	
 }
