@@ -9,7 +9,7 @@ public class BankApplicationSystem {
 	
 	
 	// Greet client
-	public static final void introduction() {
+	static final void introduction() {
 		
 		System.out.println("==========================================");
 		System.out.println("WELCOME TO BANK AWESOME!");
@@ -24,7 +24,7 @@ public class BankApplicationSystem {
 	static Scanner scanner = new Scanner(System.in);
 	
 	// Presents client with menu options
-	public static void processClientChoice() {
+	static void processClientChoice() {
 		
 		while(true) {
 			
@@ -44,6 +44,7 @@ public class BankApplicationSystem {
 					break;
 				case 2:
 					// CLient Login
+					loginClient();
 					System.out.println("2 --> Log into Your Bank Account!");
 					break;
 					
@@ -62,7 +63,7 @@ public class BankApplicationSystem {
 	}
 	
 	
-	
+	// Process client registration
 	static void registerClient() {
 		
 		UserPOJO client =  new UserPOJO();
@@ -135,14 +136,43 @@ public class BankApplicationSystem {
 		
 	}
 	
+	// process client login
 	static void loginClient() {
 		
-		//
+		System.out.println("****************************************");
+		System.out.println("ACCOUNT LOGIN!");
+		System.out.println("****************************************");
+		
+		
+		while (true) {
+			
+			try {
+				System.out.println(" Enter user name => ");
+	            String userName = scanner.nextLine();
+
+	            System.out.println(" Enter password => ");
+	            String password = scanner.nextLine();
+	            
+	            
+	            // Login validation
+	            if ("ramesh".equals(userName) && "password".equals(password)) {
+	                System.out.println(" User successfully logged-in.. ");
+	                
+	                //Connect credentials to open account menu
+	                break;
+	            } else {
+	                System.out.println(" In valid userName password or password. Try again!");
+	            }
+			} catch (Exception e) {
+				System.out.println(" Something went wrong. Please Try again!");
+			}
+		}
+		
 	}
 	
 	
 	// Terminate program or sign-out
-	public static final void exitSystem() {
+	static final void exitSystem() {
 		System.out.println("****************************************");
 		System.out.println("You have been signed out successfully");
 		System.out.println("Thank you for using Bank Awesome!!");
@@ -159,5 +189,7 @@ public class BankApplicationSystem {
 	}
 	
 	
+	// 
+	static 
 
 }
