@@ -6,7 +6,8 @@ public interface UserDAO {
 	
 	// Validate unique emailID
 	boolean validateEmail(UserPOJO client);
+	
 	// Bank - Client registration
-	//UserPOJO register (UserPOJO client);
+	void register (UserPOJO client);
 	 
 }

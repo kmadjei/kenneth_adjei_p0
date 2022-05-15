@@ -1,13 +1,23 @@
 package data_persistance_dao;
 
 import java.sql.Statement;
+import java.util.UUID;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import models.UserPOJO;
 
 
 public class UserDAOImpl implements UserDAO {
+	
+	Database db;
+	
+	public UserDAOImpl () {
+		
+		// Initialize DB object
+		db = new Database();
+	}
 	
 	
 	/*
@@ -20,7 +30,6 @@ public class UserDAOImpl implements UserDAO {
 	public boolean validateEmail(UserPOJO client)  { 
 		//include custom SystemException refer to Teacher Notes
 		
-		Database db = new Database();
 		
 		try {
 			
@@ -33,12 +42,11 @@ public class UserDAOImpl implements UserDAO {
 			String query = "SELECT email FROM bank_clients WHERE email = '" + client.getEmailID() + "'";
 
 			System.out.println("Validating email in DB.....");
+			System.out.println();
 			
 			ResultSet result = statement.executeQuery(query);
-			//System.out.println("result size --- " + result.getFetchSize());
 			
 			if (result.getFetchSize() == 0) {
-				System.out.println("Yay email is unique");
 				db.connect().close();
 				return true;
 			}
@@ -47,13 +55,57 @@ public class UserDAOImpl implements UserDAO {
 		} catch(SQLException e) {
 			// throw error for custom exception
 			System.out.println(e.getMessage());
-			System.out.println("");
+			System.out.println();
 			e.printStackTrace();
 			//return false
 			
 		} 
 		
 		return false;
+	}
+
+	
+	/*
+	 * Uses client object to add new client to DB when called
+	 */
+	@Override
+	public void register(UserPOJO client) {
+
+        try {
+        	
+        
+        	String query = "INSERT INTO bank_clients" +
+        	        "  (bank_id, first_name, last_name, email, password) VALUES " +
+        	        " (?, ?, ?, ?, ?);";
+        	System.out.println("prepping query...");
+        	
+        	
+        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
+            preparedStatement.setString(1, client.getBankAccountID());
+            preparedStatement.setString(2, client.getFirstName());
+            preparedStatement.setString(3, client.getLastName());
+            preparedStatement.setString(4, client.getEmailID());
+            preparedStatement.setString(5, client.getPassword());
+            
+            
+           int size = preparedStatement.executeUpdate();
+           
+           if (size == 0) {
+        	   System.out.println("Fail to update DB with user INFO :(");
+        	   System.out.println();
+           } else {
+        	   System.out.println("Completed Your Registeration in the DB :)");
+        	   System.out.println();
+           }
+
+        } catch (SQLException e) {
+        	// throw error for custom exception
+			System.out.println(e.getMessage());
+			System.out.println("");
+			e.printStackTrace();
+        }
+
+    
 	}
 	
 }

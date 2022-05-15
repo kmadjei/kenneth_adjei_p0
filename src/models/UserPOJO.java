@@ -2,11 +2,12 @@ package models;
 
 public class UserPOJO {
 	
+	private String bankAccountID;
 	private String firstName;
 	private String lastName;
 	private String emailID;
 	private String password;
-	private String bankAccountID;
+	
 	
 	
 	// default constructor
@@ -14,7 +15,7 @@ public class UserPOJO {
 	
 	// constructor with parameters
 	public UserPOJO( String firstName, String lastName, String emailID, String password, String bankAccountID) {
-		//super();
+
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.emailID = emailID;
@@ -72,8 +73,8 @@ public class UserPOJO {
 
 	@Override
 	public String toString() {
-		return "ClientPOJO [firstName=  " + firstName + ", lastName= " + lastName + ", emailID= " 
-				+ emailID + "]";
+		return "ClientPOJO [firstName =  " + firstName + ", lastName = " + lastName + ", emailID = " 
+				+ emailID + ", password = " + password + "]";
 	}
 	
 }

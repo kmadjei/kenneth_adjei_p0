@@ -3,9 +3,14 @@ package service;
 import java.util.Scanner;
 import java.util.UUID;
 
+import data_persistance_dao.UserDAOImpl;
 import models.UserPOJO;
 
 public class BankApplicationSystem {
+	
+	static Scanner scanner = new Scanner(System.in);
+	static UserPOJO client = new UserPOJO();
+	static UserDAOImpl userDAO = new UserDAOImpl();
 	
 	
 	// Greet client
@@ -18,10 +23,11 @@ public class BankApplicationSystem {
 		System.out.println("Please enter an option you would like me to help you with today?");
 		System.out.println("1 --> Register A New Account!");
 		System.out.println("2 --> Log into Your Bank Account!");
+		System.out.println("3 --> End Session!");
 		
 	}
 	
-	static Scanner scanner = new Scanner(System.in);
+	
 	
 	// Presents client with menu options
 	public static void processClientChoice() {
@@ -47,9 +53,15 @@ public class BankApplicationSystem {
 					loginClient();
 					System.out.println("2 --> Log into Your Bank Account!");
 					break;
+				case 3:
+					// End Program
+					exitSystem();
+					System.out.println("2 --> Log into Your Bank Account!");
+					break;	
 					
 				default:
-					System.out.println("\nPlease select the corresponsding integer (1 or 2).");
+					System.out.println("Please select the corresponsding integer (1 or 2).");
+					System.out.println();
 					break;
 			}
 				
@@ -66,73 +78,82 @@ public class BankApplicationSystem {
 	// Process client registration
 	public static void registerClient() {
 		
-		UserPOJO client =  new UserPOJO();
 		
-		try(Scanner scan = new Scanner(System.in)) {
-			
+		try {
+			System.out.println();
 			System.out.println("****************************************");
 			System.out.println("REGISTERATION");
 			System.out.println("****************************************");
 			
 			System.out.println();
 			System.out.println("Please Enter Your First Name: ");
-			String firstName = scan.nextLine();
+			String firstName = scanner.nextLine();
 			firstName = firstName.trim();
 			client.setFirstName(firstName);
 			
 			
 			System.out.println("Please Enter Your Last Name: ");
-			String lastName = scan.nextLine();
+			String lastName = scanner.nextLine();
 			lastName = lastName.trim();
 			client.setLastName(lastName);
 			
-			System.out.println("Please Enter Your Email: ");
-			String email = scan.nextLine();
-			email = email.trim();
-			// check with DB if email exist
-			client.setEmailID(email);
+			while(true) {
+				System.out.println("Please Enter Your Email: ");
+				String email = scanner.nextLine();
+				email = email.trim();
+				client.setEmailID(email);
+				
 			
-			System.out.println("Please Enter Your Password: ");
-			String pwd = scan.nextLine();
-			pwd = pwd.trim();
-			client.setPassword(pwd);
-			
-			System.out.println("Please Confirm Your Password: ");
-			String confirmpwd = scan.nextLine();
-			confirmpwd = pwd.trim();
-
+				// check with DB if email is unique
+				if (userDAO.validateEmail(client)) {
+					break;
+				} else {
+					System.out.println("Please try a different email!");
+					System.out.println();
+				}
+				
+				
+				
+			}
 			
 			while(true) {
-				
-				System.out.println("The password does not match!");
-				System.out.println("Please try again!!");
-				System.out.println();
-				
 				System.out.println("Please Enter Your Password: ");
-				pwd = scan.nextLine();
+				String pwd = scanner.nextLine();
+				pwd = pwd.trim();
 				client.setPassword(pwd);
 				
 				System.out.println("Please Confirm Your Password: ");
-				confirmpwd = scan.nextLine();
-
-
+				String confirmpwd = scanner.nextLine();
+				confirmpwd = pwd.trim();
+				
 				if (pwd.equals(confirmpwd)) {
 					break;
+				} else {
+					System.out.println("The password does not match!");
+					System.out.println("Please try again!!");
+					System.out.println();
 				}
+			}
 
-			}	
 			
 		} catch (Exception e){
+			// throw custom system error
 			System.out.println("\nPlease select rg block.");
+			
 		}
 		
-		//generate client ID
+		//generate client Bank ID
+		client.setBankAccountID(createBankID());
+		System.out.println("Please wait a moment!");
+		System.out.println("Your Account is being created....");
+		System.out.println();
+		
 		// Send data OBJECT to DB as OBJECT Connect to DAO methods CRUD 
-		// gene
+		userDAO.register(client);
 
 		System.out.println(client.getFirstName() + " You Have Registered Successfully");
 		System.out.println(client.toString());
-		//client.toString();
+		System.out.println();
 		
 	}
 	
@@ -178,8 +199,8 @@ public class BankApplicationSystem {
 	// Terminate program or sign-out
 	public static final void exitSystem() {
 		System.out.println("****************************************");
-		System.out.println("You have been signed out successfully");
-		System.out.println("Thank you for using Bank Awesome!!");
+		System.out.println("Thank you for using Bank Awesome!");
+		System.out.println("Have A Wonderful Day :)"); 
 		System.out.println("****************************************");
 		System.exit(0);
 	}
@@ -187,25 +208,24 @@ public class BankApplicationSystem {
 	/*
 	 * Generate Unique Bank ID when for new users
 	 */
-	public String createUniqueID() {
-	    String uniqueID = UUID.randomUUID().toString();
-	    return uniqueID;
+	public static String createBankID() {
+	    return UUID.randomUUID().toString();
 	}
 	
 	
-	// 
+	// Generates an account menu when user logs in successfully
 	public static void openAccountMenu(UserPOJO user) {
 		
 		while(true) {
 			
-			System.out.println("****************************************");
-			System.out.println("Welcome " + user.getFirstName() + " To Your Client Dashboard Options");
+			System.out.println("\n****************************************");
+			System.out.println("Welcome " + user.getFirstName() + " To Your Client Dashboard");
 			System.out.println("****************************************");
 			System.out.println();
 			System.out.println("Please select one of the options below!!");
 			System.out.println("1 --> Check All Balance");
-			System.out.println("2 --> Withdraw From  An Account");
-			System.out.println("3 --> Deposit To Account");
+			System.out.println("2 --> Withdraw From An Account");
+			System.out.println("3 --> Deposit To An Account");
 			System.out.println("4 --> Sign Out");
 			
 			try {
