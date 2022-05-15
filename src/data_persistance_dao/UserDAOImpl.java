@@ -27,10 +27,6 @@ public class UserDAOImpl implements UserDAO {
 		try {
 			
 			Statement statement = db.connect().createStatement();
-			 
-			if (db.connect() != null) {
-				System.out.println("Connected To DB from Validate EMail");
-			}
 			
 			String query = "SELECT email FROM bank_clients WHERE email = '" + client.getEmailID() + "'";
 			
@@ -80,12 +76,16 @@ public class UserDAOImpl implements UserDAO {
             
             System.out.println("Registering bankaccount details....");
             BankAccountDAO bankAccount = new BankAccountDAOImpl();
-            boolean createAccount =  bankAccount.createAccount(client.getBankAccountID());
-            System.out.println("Your bank account has been created.");
             
-           int size = preparedStatement.executeUpdate();
+            int size = preparedStatement.executeUpdate();
+            boolean createAccount = false;
+            
+            if (size != 0) {
+            	createAccount =  bankAccount.createAccount(client.getBankAccountID());
+            }
+ 
            
-           if (size == 0 && createAccount == false) {
+           if (createAccount == false) {
         	   System.out.println("Fail to update User DB with user INFO :(");
         	   System.out.println();
         	   db.connect().close();

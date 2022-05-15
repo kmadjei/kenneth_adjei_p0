@@ -6,6 +6,13 @@ public class BankAccountPOJO {
 	private String bankAccountID;
 	private double balance;
 	
+	public BankAccountPOJO() {}
+	
+	public BankAccountPOJO(String bankAccountID) {
+		this.bankAccountID = bankAccountID;
+		this.balance = 0;
+	}
+	
 	public String getBankAccountID() {
 		return bankAccountID;
 	}

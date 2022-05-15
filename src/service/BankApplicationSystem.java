@@ -3,6 +3,7 @@ package service;
 import java.util.Scanner;
 import java.util.UUID;
 
+import data_persistance_dao.BankAccountDAOImpl;
 import data_persistance_dao.UserDAOImpl;
 import models.UserPOJO;
 
@@ -11,6 +12,7 @@ public class BankApplicationSystem {
 	static Scanner scanner = new Scanner(System.in);
 	static UserPOJO client = new UserPOJO();
 	static UserDAOImpl userDAO = new UserDAOImpl();
+	static BankAccountDAOImpl bankAccountDAO = new BankAccountDAOImpl();
 	
 	
 	// Greet client
@@ -110,8 +112,7 @@ public class BankApplicationSystem {
 				} else {
 					System.out.println("Please try a different email!");
 					System.out.println();
-				}
-				
+				}			
 				
 				
 			}
@@ -149,11 +150,18 @@ public class BankApplicationSystem {
 		System.out.println();
 		
 		// Send data OBJECT to DB as OBJECT Connect to DAO methods CRUD 
-		userDAO.register(client);
+		boolean register = userDAO.register(client);
 
-		System.out.println(client.getFirstName() + " You Have Registered Successfully");
-		System.out.println(client.toString());
-		System.out.println();
+		if(register) {
+			System.out.println(client.getFirstName() + " You Have Registered Successfully");
+			System.out.println(client.toString());
+			System.out.println();
+		} else {
+			System.out.println("You Have Failed To Register Successfully!");
+			System.out.println("Please Try Again!!");
+			System.out.println();
+		}
+
 		
 	}
 	
