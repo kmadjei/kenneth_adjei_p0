@@ -1,7 +1,6 @@
 package data_persistance_dao;
 
 import java.sql.Statement;
-import java.util.UUID;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,13 +18,7 @@ public class UserDAOImpl implements UserDAO {
 		db = new Database();
 	}
 	
-	
-	/*
-	 * Takes in client object to check if emailID is unique for
-	 * the database
-	 * @param client
-	 * 
-	 */
+	// Validates email being used for registration
 	@Override
 	public boolean validateEmail(UserPOJO client)  { 
 		//include custom SystemException refer to Teacher Notes
@@ -40,9 +33,6 @@ public class UserDAOImpl implements UserDAO {
 			}
 			
 			String query = "SELECT email FROM bank_clients WHERE email = '" + client.getEmailID() + "'";
-
-			System.out.println("Validating email in DB.....");
-			System.out.println();
 			
 			ResultSet result = statement.executeQuery(query);
 			
@@ -88,12 +78,17 @@ public class UserDAOImpl implements UserDAO {
             preparedStatement.setString(5, client.getPassword());
             
             
+            System.out.println("Registering bankaccount details....");
+            new BankAccountDAOImpl().createAccount(client.getBankAccountID());
+            System.out.println("Your bank account has been created.");
+            
            int size = preparedStatement.executeUpdate();
            
            if (size == 0) {
-        	   System.out.println("Fail to update DB with user INFO :(");
+        	   System.out.println("Fail to update User DB with user INFO :(");
         	   System.out.println();
            } else {
+        	   db.connect().close();
         	   System.out.println("Completed Your Registeration in the DB :)");
         	   System.out.println();
            }
