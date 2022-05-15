@@ -8,6 +8,6 @@ public interface UserDAO {
 	boolean validateEmail(UserPOJO client);
 	
 	// Bank - Client registration
-	void register (UserPOJO client);
+	boolean register (UserPOJO client);
 	 
 }

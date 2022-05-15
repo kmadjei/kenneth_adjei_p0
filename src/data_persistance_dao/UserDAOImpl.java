@@ -59,7 +59,7 @@ public class UserDAOImpl implements UserDAO {
 	 * Uses client object to add new client to DB when called
 	 */
 	@Override
-	public void register(UserPOJO client) {
+	public boolean register(UserPOJO client) {
 
         try {
         	
@@ -79,18 +79,23 @@ public class UserDAOImpl implements UserDAO {
             
             
             System.out.println("Registering bankaccount details....");
-            new BankAccountDAOImpl().createAccount(client.getBankAccountID());
+            BankAccountDAO bankAccount = new BankAccountDAOImpl();
+            boolean createAccount =  bankAccount.createAccount(client.getBankAccountID());
             System.out.println("Your bank account has been created.");
             
            int size = preparedStatement.executeUpdate();
            
-           if (size == 0) {
+           if (size == 0 && createAccount == false) {
         	   System.out.println("Fail to update User DB with user INFO :(");
         	   System.out.println();
+        	   db.connect().close();
+        	   return false;
+        	   
            } else {
         	   db.connect().close();
         	   System.out.println("Completed Your Registeration in the DB :)");
         	   System.out.println();
+        	   return true;
            }
 
         } catch (SQLException e) {
@@ -99,8 +104,9 @@ public class UserDAOImpl implements UserDAO {
 			System.out.println("");
 			e.printStackTrace();
         }
+        
+        return false;
 
-    
 	}
 	
 }
