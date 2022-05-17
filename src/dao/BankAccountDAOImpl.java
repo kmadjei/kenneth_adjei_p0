@@ -30,9 +30,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	            preparedStatement.setString(1, bankAccountID);
 
 	            ResultSet result = preparedStatement.executeQuery();
-	            //System.out.println(result.next());
-	            
-	            System.out.println(bankAccountID + " ---> " + bankAccount.getBalance());
+	   
 	            System.out.println("Getting account info from DB...");
 	            System.out.println();
 	            // getting bank accounts from DB
@@ -49,8 +47,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	            
 
 	            if(bankAccounts.size() > 0) {
-	            	System.out.println("Bank account(s) retrieved successfully...");
-	            	System.out.println();
+	            	db.connect().close();
 	            }
 	        	
 
@@ -106,10 +103,39 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 		return false;
 	}
 
-	// updates client's bank account
+	// updates client's bank account after deposit
 	@Override
-	public void deposit(BankAccountPOJO bankAccount, double depositAmount) {
+	public void deposit(BankAccountPOJO bankAccount) {
 		
+		  try {
+		         
+	        	String query = "UPDATE bank_accounts SET balance=? WHERE account_id=?";
+	        	
+	        	
+	        	System.out.println("Processing your deposit....");
+	        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
+	        	preparedStatement.setDouble(1, bankAccount.getBalance());
+	        	preparedStatement.setInt(2, bankAccount.getAccountNumber());
+	        	
+	            // execute SQL query
+	        	int size = preparedStatement.executeUpdate();
+	           
+	           if (size == 0) {
+	        	   db.connect().close();
+	        	   System.out.println("Fail to update Bank Account DB with Bank INFO :(");
+	        	   System.out.println();
+	           } else {
+	        	   db.connect().close();
+	        	   System.out.println();
+	           }
+
+	        } catch (SQLException e) {
+	        	// throw error for custom exception
+				System.out.println(e.getMessage());
+				System.out.println("");
+				e.printStackTrace();
+	        }
+		  
 
 	}
 

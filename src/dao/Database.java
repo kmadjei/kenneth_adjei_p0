@@ -8,7 +8,6 @@ public class Database {
 	private static final String url = "jdbc:postgresql://localhost/bankApp";
     private static final String user = "postgres";
     private static final String password = "password";
-    private static final String driver = "org.postgresql.Driver";
     
     private static Database instance = new Database(); //load single instance
     

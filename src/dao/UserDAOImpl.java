@@ -35,7 +35,10 @@ public class UserDAOImpl implements UserDAO {
 			
 			ResultSet result = statement.executeQuery(query);
 			
-			if(result.next()) { return true; }
+			if(result.next()) { 
+				System.out.println("Email - " + result.getString("email"));
+				return true;
+			}
 
 			
 		} catch(SQLException e) {
@@ -128,7 +131,7 @@ public class UserDAOImpl implements UserDAO {
 	        	String query = "SELECT * FROM bank_clients" + " WHERE email =?;";
 
 	        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
-	            preparedStatement.setString(1, "kadj");
+	            preparedStatement.setString(1, client.getEmailID());
 	            
 	            
 	            ResultSet result = preparedStatement.executeQuery();
@@ -144,6 +147,8 @@ public class UserDAOImpl implements UserDAO {
                     validatedUser.setPassword(result.getString("password"));
                    
                 }
+                
+                System.out.println("Validated Email " + validatedUser.getEmailID());
 	            
 	             // Process result from SQL query for login validation     
 	            if (validatedUser.getEmailID() != null && client.getPassword().equals(validatedUser.getPassword())) {
