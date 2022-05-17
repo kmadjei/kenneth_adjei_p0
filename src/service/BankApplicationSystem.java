@@ -1,10 +1,14 @@
 package service;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 
-import data_persistance_dao.BankAccountDAOImpl;
-import data_persistance_dao.UserDAOImpl;
+import dao.BankAccountDAOImpl;
+import dao.UserDAOImpl;
+import models.BankAccountPOJO;
 import models.UserPOJO;
 
 public class BankApplicationSystem {
@@ -117,17 +121,21 @@ public class BankApplicationSystem {
 				
 			}
 			
+			// validate password
 			while(true) {
 				System.out.println("Please Enter Your Password: ");
-				String pwd = scanner.nextLine();
-				pwd = pwd.trim();
-				client.setPassword(pwd);
+				String password = scanner.nextLine();
+				password = password.trim();
+				client.setPassword(password);
 				
 				System.out.println("Please Confirm Your Password: ");
 				String confirmpwd = scanner.nextLine();
-				confirmpwd = pwd.trim();
+				confirmpwd = confirmpwd.trim();
 				
-				if (pwd.equals(confirmpwd)) {
+				System.out.println("pwd --> " + password);
+				System.out.println("confim --> " + confirmpwd);
+				
+				if (password.equals(confirmpwd)) {
 					break;
 				} else {
 					System.out.println("The password does not match!");
@@ -143,11 +151,13 @@ public class BankApplicationSystem {
 			
 		}
 		
-		//generate client Bank ID
-		client.setBankAccountID(createBankID());
+
 		System.out.println("Please wait a moment!");
 		System.out.println("Your Account is being created....");
 		System.out.println();
+		
+		//generate client Bank ID
+		client.setBankAccountID(createBankID());
 		
 		// Send data OBJECT to DB as OBJECT Connect to DAO methods CRUD 
 		boolean register = userDAO.register(client);
@@ -176,25 +186,28 @@ public class BankApplicationSystem {
 		while (true) {
 			
 			try {
-				System.out.println(" Enter user name => ");
+				System.out.println("Enter Email ID => ");
 	            String email = scanner.nextLine();
-
-	            System.out.println(" Enter password => ");
+	            email = email.trim();
+	            client.setEmailID(email);
+	            
+	            System.out.println("Enter password => ");
 	            String password = scanner.nextLine();
+	            password = password.trim();
+	            client.setPassword(password);
 	            
-	            
+	            System.out.println("Processing account login...");
+	            UserPOJO userLogin = userDAO.login(client);
 	            // Login validation
-	            if ("ramesh".equals(email) && "password".equals(password)) {
-	                System.out.println(" User successfully logged-in.. ");
-	                
-	                //String firstName; String lastName, String emailID, String password, String bankAccountID;
-	                
-	                //UserPOJO client = new UserPOJO(firstName, lastName, emailID, password, bankAccountID);
-	                
+	            if (userLogin != null) {
+	                System.out.println("You have been successfully logged-in!");
+
 	                //Connect credentials to open account menu
-	                break;
+	                openAccountMenu(userLogin);
+	                
+	               break;
 	            } else {
-	                System.out.println(" In valid userName password or password. Try again!");
+	                System.out.println("Invalid userName password or password. Try again!");
 	            }
 			} catch (Exception e) {
 				System.out.println(" Something went wrong. Please Try again!");
@@ -213,9 +226,8 @@ public class BankApplicationSystem {
 		System.exit(0);
 	}
 	
-	/*
-	 * Generate Unique Bank ID when for new users
-	 */
+
+	// Generate Unique Bank ID when for new users
 	public static String createBankID() {
 	    return UUID.randomUUID().toString();
 	}
@@ -226,7 +238,8 @@ public class BankApplicationSystem {
 		
 		while(true) {
 			
-			System.out.println("\n****************************************");
+			System.out.println();
+			System.out.println("****************************************");
 			System.out.println("Welcome " + user.getFirstName() + " To Your Client Dashboard");
 			System.out.println("****************************************");
 			System.out.println();
@@ -242,6 +255,7 @@ public class BankApplicationSystem {
 				switch(option) {
 				case 1:
 					// Check All balance
+					getAllBalance(user.getBankAccountID());
 					break;
 				case 2:
 					// Withdraw from accounts
@@ -266,9 +280,171 @@ public class BankApplicationSystem {
 			
 
 		}
-
 		
+		
+	} //END OF ACCOUNT MENU
+
+	// Display all client bank accounts
+	public static void getAllBalance(String bankAccountID) {
+		
+		System.out.println();
+		System.out.println("****************************************");
+		System.out.println("Account Balance");
+		System.out.println("****************************************");
+		System.out.println();
+		
+		
+		//grab all account info from db
+		bankAccountDAO = new BankAccountDAOImpl(bankAccountID);
+		HashMap<Integer, BankAccountPOJO> bankAccounts = bankAccountDAO.getAccountBalance();
+		
+		double totalBalance = 0;
+		// Loops through list of bank account objects
+		for(Integer accountNum: bankAccounts.keySet()) {
+			
+			System.out.println("Account " + accountNum +   
+					" ---> " + bankAccounts.get(accountNum).getBalance());
+			System.out.println();
+			totalBalance += bankAccounts.get(accountNum).getBalance();
+			
+		}
+		
+		System.out.println("Your Total Account Balance is " + totalBalance);
+		System.out.println();
+		
+		System.out.println("==========================================");
+		System.out.println("To Go Back Enter 1 to Sign out Enter 2");
+		
+		while(true) {
+			try {
+				int option = Integer.parseInt(scanner.nextLine());
+				
+				switch(option) {
+				case 1:
+					break; // Exit out of switch statement
+				case 2:
+					// Exit system 
+					exitSystem();
+					break;
+				default:
+					System.out.println("\nPlease carefully select the right option.");
+					break;
+				}
+				
+				break; //Back to client Dashboard
+				
+			} catch (Exception e) {
+				System.out.println("\nPlease carefully select the right option.");
+				
+			}
+			
+		}
 		
 	}
+	
+	// Gives client access to deposit to an account
+	public static void depositToAccount(String bankAccountID) {
+		
+		System.out.println();
+		System.out.println("****************************************");
+		System.out.println("Choose An Account For Your Deposit");
+		System.out.println("****************************************");
+		System.out.println();
+		
+		//grab all account info from db with total
+		bankAccountDAO = new BankAccountDAOImpl(bankAccountID);
+		HashMap<Integer, BankAccountPOJO> bankAccounts = bankAccountDAO.getAccountBalance();
+		
+
+		// Loops through list of bank account objects
+		for(Integer accountNum: bankAccounts.keySet()) {
+			
+			System.out.println("Account # " + accountNum +   
+					" ---> " + bankAccounts.get(accountNum).getBalance());
+			System.out.println();
+			
+		}
+
+		// Checks and validate user input
+		while(true) {
+			try {
+				int accountNumber = Integer.parseInt(scanner.nextLine());
+				
+				// validate input
+				if (bankAccounts.containsKey(accountNumber)) {
+					
+					System.out.println("How much do you want to deposit into Account #" + accountNumber + " ?");
+					double depositAmount = 0;
+					
+					while(true) {
+						try {
+							depositAmount = Double.parseDouble(scanner.nextLine());
+							
+							
+							
+							break;
+						} catch(Exception e) {
+							System.out.println("Please enter the correct ammount!");
+						}						
+					}
+					
+					
+					BankAccountPOJO account = bankAccounts.get(accountNumber);
+					double initialAmount = account.getBalance();
+					
+					account.setBalance(initialAmount + depositAmount);
+	
+					
+					/* CODE Block to deposit into DB
+					BankAccountPOJO account = bankAccounts.get(accountNumber);
+					bankAccountDAO.deposit(account, depositAmount);
+					*/
+					
+					
+					System.out.println("Your have successfully deposited " + depositAmount + " into your account");
+					
+					System.out.println("==========================================");
+					System.out.println("To Go Back Enter 1 to Sign out Enter 2");
+					
+					while(true) {
+						try {
+							int option = Integer.parseInt(scanner.nextLine());
+							
+							switch(option) {
+							case 1:		
+								break; // Back To Client Dashboard
+							case 2:
+								// Exit system 
+								exitSystem();
+								break;
+							default:
+								System.out.println("\nPlease carefully select the right option.");
+								break;
+							}
+							
+							
+						} catch (Exception e) {
+							System.out.println("\nPlease carefully select the right option.");
+							
+						}
+						
+					} // END OF WHILE LOOP
+					
+
+				} else {
+					System.out.println("No such account number exist please try again.");				
+				}
+				
+			} catch (Exception e) { 
+				System.out.println("No such account number exist please try again.");
+			}
+		} // END OF WHILE LOOP
+		
+
+	}
+	
+	// Gives client access to withdraw from an account
+	public static void withdrawFromAccount(String bankAccountID) {}
+
 
 }

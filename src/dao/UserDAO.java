@@ -1,4 +1,4 @@
-package data_persistance_dao;
+package dao;
 
 import models.UserPOJO;
 
@@ -9,5 +9,8 @@ public interface UserDAO {
 	
 	// Bank - Client registration
 	boolean register (UserPOJO client);
+	
+	// Handle client login validations
+	UserPOJO login(UserPOJO client);
 	 
 }
