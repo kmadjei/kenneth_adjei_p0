@@ -139,9 +139,40 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 
 	}
 
+	//Updates account balance upon withdrawals
 	@Override
 	public void withdraw(BankAccountPOJO bankAccount) {
-		// TODO Auto-generated method stub
+		
+		  try {
+		         
+	        	String query = "UPDATE bank_accounts SET balance=? WHERE account_id=?";
+	        	
+	        	
+	        	System.out.println("Processing your withdrawal....");
+	        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
+	        	preparedStatement.setDouble(1, bankAccount.getBalance());
+	        	preparedStatement.setInt(2, bankAccount.getAccountNumber());
+	        	
+	            // execute SQL query
+	        	int size = preparedStatement.executeUpdate();
+	           
+	           if (size == 0) {
+	        	   db.connect().close();
+	        	   System.out.println("Fail to update Bank Account DB with Bank INFO :(");
+	        	   System.out.println();
+	           } else {
+	        	   db.connect().close();
+	        	   System.out.println();
+	           }
+
+	        } catch (SQLException e) {
+	        	// throw error for custom exception
+				System.out.println(e.getMessage());
+				System.out.println("");
+				e.printStackTrace();
+	        }
+		  
+
 
 	}
 

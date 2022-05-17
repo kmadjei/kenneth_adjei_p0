@@ -231,6 +231,7 @@ public class BankApplicationSystem {
 			System.out.println("1 --> Check All Balance");
 			System.out.println("2 --> Withdraw From An Account");
 			System.out.println("3 --> Deposit To An Account");
+			System.out.println("5 --> Add Another Bank Account");
 			System.out.println("4 --> Sign Out");
 
 			try {
@@ -427,7 +428,109 @@ public class BankApplicationSystem {
 
 	// Gives client access to withdraw from an account
 	public static void withdrawFromAccount(String bankAccountID) {
+		
+		
+		System.out.println();
+		System.out.println("****************************************");
+		System.out.println("Choose An Account Number For Your Withdrawal!");
+		System.out.println("****************************************");
+		System.out.println();
+
+		// grab all account info from db with total
+		bankAccountDAO = new BankAccountDAOImpl(bankAccountID);
+		HashMap<Integer, BankAccountPOJO> bankAccounts = bankAccountDAO.getAccountBalance();
+
+		System.out.println("Bank account(s) retrieved successfully...");
+		System.out.println();
+
+		// Loops through list of bank account objects
+		for (Integer accountNum : bankAccounts.keySet()) {
+
+			System.out.println("Account # " + accountNum + " ---> " + bankAccounts.get(accountNum).getBalance());
+			System.out.println();
+
+		}
+
+		// Checks and validate user input
+		while (true) {
+			try {
+				int accountNumber = Integer.parseInt(scanner.nextLine());
+
+				// validate input
+				if (bankAccounts.containsKey(accountNumber)) {
+
+					BankAccountPOJO account = bankAccounts.get(accountNumber);
+					double initialAmount = account.getBalance();
+					double withdrawAmount = 0;
+					
+					System.out.println("How much do you want to withdraw from account # " + accountNumber + " ?");
+
+
+					while (true) {
+						try {
+							withdrawAmount = Double.parseDouble(scanner.nextLine());
+
+							if (withdrawAmount > initialAmount) {
+								System.out.println("Please enter an ammount less than your account Balance!");
+							} else {
+								break;
+							}
+							
+						} catch (Exception e) {
+							System.out.println("Please enter the correct ammount!");
+						}
+					}
+					
+
+					account.setBalance(initialAmount - withdrawAmount);
+
+					// CODE Block to deposit into DB
+					bankAccountDAO.withdraw(account);
+
+					System.out.println("Your have successfully withdrawn " + withdrawAmount + " from your account");
+
+					System.out.println("==========================================");
+					System.out.println("To Go Back Enter 1 to Sign out Enter 2");
+
+					while (true) {
+						try {
+							int option = Integer.parseInt(scanner.nextLine());
+
+							switch (option) {
+							case 1:
+								break; // Back To Client Dashboard
+							case 2:
+								// Exit system
+								exitSystem();
+								break;
+							default:
+								System.out.println("\nPlease carefully select the right option.");
+								break;
+							}
+
+						} catch (Exception e) {
+							System.out.println("\nPlease carefully select the right option.");
+
+						}
+						break;
+
+					} // END OF WHILE LOOP
+
+				} else {
+					System.out.println("No such account number exist please try again.");
+				}
+
+			} catch (Exception e) {
+				System.out.println("No such account number exist please try again.");
+			}
+
+			break;
+		} // END OF WHILE LOOP
+
 	}
+			
+		
+	
 
 	// Generates an additional bank account for client
 	public static void addMoreBankAccount(String bankAccountID) {
@@ -468,6 +571,5 @@ public class BankApplicationSystem {
 
 		}
 
-	} 
-
+}
 
