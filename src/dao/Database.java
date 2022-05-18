@@ -5,7 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-	private static final String url = "jdbc:postgresql://localhost/bankApp";
+	private static final String url = 
+			"jdbc:postgresql://localhost/bankApp"
+			//jdbc:postgresql://revature-p0.cyexqwl9xulr.ca-central-1.rds.amazonaws.com";
+			;
     private static final String user = "postgres";
     private static final String password = "password";
     
