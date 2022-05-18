@@ -4,20 +4,30 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dao.BankAccountDAOImpl;
 import dao.UserDAOImpl;
+import exception.SystemException;
 import models.BankAccountPOJO;
 import models.UserPOJO;
 
 public class BankApplicationSystem {
-
+	
+	private static final Logger logger = LogManager.getLogger(BankApplicationSystem.class);
+	
 	static Scanner scanner = new Scanner(System.in);
 	static UserPOJO client = new UserPOJO();
 	static UserDAOImpl userDAO = new UserDAOImpl();
 	static BankAccountDAOImpl bankAccountDAO = new BankAccountDAOImpl();
 
+	
+	
 	// Greet client
 	static final void introduction() {
+		
+		logger.info("Starting introduction() method in service package.");
 
 		System.out.println("==========================================");
 		System.out.println("WELCOME TO BANK AWESOME!");
@@ -27,12 +37,16 @@ public class BankApplicationSystem {
 		System.out.println("1 --> Register A New Account!");
 		System.out.println("2 --> Log into Your Bank Account!");
 		System.out.println("3 --> End Session!");
+		
+		logger.info("Ending introduction() method in service package.");
 
 	}
 
 	// Presents client with menu options
-	public static void processClientChoice() {
+	public static void processClientChoice() throws SystemException {
 
+		logger.info("Starting processClientChoice() method in service package.");
+		
 		while (true) {
 
 			introduction();
@@ -61,21 +75,25 @@ public class BankApplicationSystem {
 					break;
 
 				default:
-					System.out.println("Please select the corresponsding integer (1 or 2).");
+					System.out.println("Please select the corresponsding integer (1 , 2, or 3).");
 					System.out.println();
 					break;
 				}
 
 			} catch (Exception e) {
-				System.out.println("\nPlease select the corresponsding integer (1 or 2).");
+				
+				System.out.println("\nPlease select the corresponsding integer (1, 2, or 2).");
+				logger.warn(e.getMessage());
 			}
-
+			
 		}
-
+		
 	}
 
 	// Process client registration
-	public static void registerClient() {
+	public static void registerClient() throws SystemException {
+		
+		logger.info("Starting registerClient() method in service package.");
 
 		try {
 			System.out.println();
@@ -134,8 +152,7 @@ public class BankApplicationSystem {
 			}
 
 		} catch (Exception e) {
-			// throw custom system error
-			System.out.println("\nPlease select rg block.");
+			logger.warn(e.getMessage());
 
 		}
 
@@ -158,12 +175,14 @@ public class BankApplicationSystem {
 			System.out.println("Please Try Again!!");
 			System.out.println();
 		}
-
+		logger.info("Ending registerClient() method in service package.");
 	}
 
 	// process client login
-	public static void loginClient() {
+	public static void loginClient() throws SystemException {
 
+		logger.info("Starting loginClient() method in service package.");
+		
 		System.out.println();
 		System.out.println("****************************************");
 		System.out.println("ACCOUNT LOGIN!");
@@ -198,28 +217,36 @@ public class BankApplicationSystem {
 				}
 			} catch (Exception e) {
 				System.out.println(" Something went wrong. Please Try again!");
+				logger.warn(e.getMessage());
 			}
 		}
-
+		logger.info("Ending loginClient() method in service package.");
 	}
 
 	// Terminate program or sign-out
 	public static final void exitSystem() {
+		
+		logger.info("Starting exitSystem() method in service package.");
 		System.out.println("****************************************");
 		System.out.println("Thank you for using Bank Awesome!");
 		System.out.println("Have A Wonderful Day :)");
 		System.out.println("****************************************");
+		logger.info("Ending exitSystem() method in service package.");
 		System.exit(0);
 	}
 
 	// Generate Unique Bank ID when for new users
 	public static String createBankID() {
+		logger.info("Calling createBankID() method in service package.");
+		logger.info("Ending createBankID() method in service package.");
 		return UUID.randomUUID().toString();
 	}
 
 	// Generates an account menu when user logs in successfully
-	public static void openAccountMenu(UserPOJO user) {
-
+	public static void openAccountMenu(UserPOJO user) throws SystemException {
+		
+		logger.info("Starting openAccountMenu(UserPOJO user) method in service package.");
+		
 		while (true) {
 
 			System.out.println();
@@ -231,8 +258,8 @@ public class BankApplicationSystem {
 			System.out.println("1 --> Check All Balance");
 			System.out.println("2 --> Withdraw From An Account");
 			System.out.println("3 --> Deposit To An Account");
-			System.out.println("5 --> Add Another Bank Account");
-			System.out.println("4 --> Sign Out");
+			System.out.println("4 --> Add Another Bank Account");
+			System.out.println("5 --> Sign Out");
 
 			try {
 				int option = Integer.parseInt(scanner.nextLine());
@@ -256,6 +283,7 @@ public class BankApplicationSystem {
 					break;
 				case 5:
 					// Exit system / Signout
+					logger.info("Ending openAccountMenu(UserPOJO user) method in service package.");
 					exitSystem();
 					break;
 				default:
@@ -265,16 +293,18 @@ public class BankApplicationSystem {
 
 			} catch (Exception e) {
 				System.out.println("\nPlease carefully select the right option.");
-
+				logger.warn(e.getMessage());
 			}
 
 		}
-
+		
 	} // END OF ACCOUNT MENU
 
 	// Display all client bank accounts
-	public static void getAllBalance(String bankAccountID) {
-
+	public static void getAllBalance(String bankAccountID) throws SystemException {
+		
+		logger.info("Starting getAllBalance(String bankAccountID) method in service package.");
+		
 		System.out.println();
 		System.out.println("****************************************");
 		System.out.println("Account Balance");
@@ -324,16 +354,18 @@ public class BankApplicationSystem {
 
 			} catch (Exception e) {
 				System.out.println("\nPlease carefully select the right option.");
-
+				logger.warn(e.getMessage());
 			}
 
 		}
-
+		logger.info("Ending getAllBalance(String bankAccountID) method in service package.");
 	}
 
 	// Gives client access to deposit to an account
-	public static void depositToAccount(String bankAccountID) {
+	public static void depositToAccount(String bankAccountID) throws SystemException {
 
+		logger.info("Starting depositToAccount(String bankAccountID) method in service package.");
+		
 		System.out.println();
 		System.out.println("****************************************");
 		System.out.println("Choose An Account Number For Your Deposit");
@@ -407,7 +439,7 @@ public class BankApplicationSystem {
 
 						} catch (Exception e) {
 							System.out.println("\nPlease carefully select the right option.");
-
+							logger.warn(e.getMessage());
 						}
 						break;
 
@@ -419,16 +451,19 @@ public class BankApplicationSystem {
 
 			} catch (Exception e) {
 				System.out.println("No such account number exist please try again.");
+				logger.warn(e.getMessage());
 			}
 
 			break;
 		} // END OF WHILE LOOP
-
+		logger.info("Ending depositToAccount(String bankAccountID) method in service package.");
+		
 	}
 
 	// Gives client access to withdraw from an account
-	public static void withdrawFromAccount(String bankAccountID) {
+	public static void withdrawFromAccount(String bankAccountID) throws SystemException {
 		
+		logger.info("Starting withdrawFromAccount(String bankAccountID) method in service package.");
 		
 		System.out.println();
 		System.out.println("**********************************************");
@@ -478,6 +513,7 @@ public class BankApplicationSystem {
 							
 						} catch (Exception e) {
 							System.out.println("Please enter the correct ammount!");
+							logger.warn(e.getMessage());
 						}
 					}
 					
@@ -510,7 +546,7 @@ public class BankApplicationSystem {
 
 						} catch (Exception e) {
 							System.out.println("\nPlease carefully select the right option.");
-
+							logger.warn(e.getMessage());
 						}
 						break;
 
@@ -522,20 +558,21 @@ public class BankApplicationSystem {
 
 			} catch (Exception e) {
 				System.out.println("No such account number exist please try again.");
+				logger.warn(e.getMessage());
 			}
 
 			break;
 		} // END OF WHILE LOOP
-
+		logger.info("Ending withdrawFromAccount(String bankAccountID) method in service package.");
 	}
 			
 		
 	
 
 	// Generates an additional bank account for client
-	public static void addMoreBankAccount(String bankAccountID) {
-
-
+	public static void addMoreBankAccount(String bankAccountID) throws SystemException {
+		
+		logger.info("Starting addMoreBankAccount(String bankAccountID) method in service package.");
 
 			System.out.println();
 			System.out.println("************************************************************");
@@ -564,12 +601,13 @@ public class BankApplicationSystem {
 
 				} catch (Exception e) {
 					System.out.println("\nPlease carefully select the right option.");
+					logger.warn(e.getMessage());
 				}
 				
 				break;
 			}
-
+			logger.info("Ending addMoreBankAccount(String bankAccountID) method in service package.");
 		}
-
+	
 }
 
