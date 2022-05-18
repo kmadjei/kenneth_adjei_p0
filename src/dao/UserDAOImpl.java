@@ -2,6 +2,9 @@ package dao;
 
 import java.sql.Statement;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,19 +14,21 @@ import models.UserPOJO;
 
 
 public class UserDAOImpl implements UserDAO {
-
+	
+	private static final Logger logger = LogManager.getLogger(UserDAOImpl.class);
 	Database db = Database.getInstance();
 	
 	// Validates email being used for registration
 	@Override
 	public boolean validateEmail(UserPOJO client) { 
-		//include custom SystemException 
 		
+		logger.info("Starting validateEmail(UserPOJO client) method in dao.");
 		
 
 		System.out.println("validate email.....");
 		try {
 			
+			logger.info("Connecting to DB.");
 			Connection conn = db.connect();
 			Statement statement = conn.createStatement();
 			
@@ -38,20 +43,19 @@ public class UserDAOImpl implements UserDAO {
 			if(result.next()) { 
 				System.out.println("Email already exist in database!");
 				System.out.println("Email - " + result.getString("email"));
+				logger.info("Closing DB connection.");
+				logger.info("Ending validateEmail(UserPOJO client) method in dao.");
+				conn.close();
 				return true;
 			}
 
 			
 		} catch(SQLException e) {
-			// throw error for custom exception
-			System.out.println(e.getMessage());
-			System.out.println();
-			e.printStackTrace();
-			//return false
-			
+			System.out.println("Sorry, but a system error occured. Please proceed later.");
+			logger.warn(e.getMessage());
 		} 
 		
-		
+		logger.info("Ending validateEmail(UserPOJO client) method in dao.");
 		return false;
 	}
 
@@ -59,9 +63,12 @@ public class UserDAOImpl implements UserDAO {
 	//Uses client object to add new client to DB when called
 	@Override
 	public boolean register(UserPOJO client) {
-
+		
+		logger.info("Starting register(UserPOJO client) method in dao.");
+		
         try {
         	
+        	logger.info("Connecting to DB");
         	Connection conn = db.connect();
         
         	String query = "INSERT INTO bank_clients" +
@@ -92,23 +99,28 @@ public class UserDAOImpl implements UserDAO {
            if (createAccount == false) {
         	   System.out.println("Fail to update User DB with user INFO :(");
         	   System.out.println();
-        	   //db.connect().close();
+        	   db.connect().close();
+        	   logger.info("Closing DB conncection");
+        	   logger.info("Ending register(UserPOJO client) method in dao.");
         	   return false;
         	   
            } else {
-        	   //db.connect().close();
+        	   logger.info("Closing DB conncection");
+        	   db.connect().close();
         	   System.out.println("Completed Your Registeration in the DB :)");
         	   System.out.println();
+        	   logger.info("Endingregister(UserPOJO client) method in dao.");
         	   return true;
            }
 
         } catch (SQLException e) {
-        	// throw error for custom exception
-			System.out.println(e.getMessage());
+        	
+        	logger.warn(e.getMessage());
+			System.out.println("Sorry, but a system error occured.");
 			System.out.println("");
-			e.printStackTrace();
+			logger.warn("Closing DB conncectiong");
         }
-        
+        logger.info("Ending register(UserPOJO client) method in dao.");
         return false;
 
 	}
@@ -116,21 +128,13 @@ public class UserDAOImpl implements UserDAO {
 	
 	public UserPOJO login(UserPOJO client) {
 
-		/* SAMPLE login
-		UserPOJO validateUser = new UserPOJO("Kenneth", "Adjei", "ka@email.com", "secret", 
-				"6ba7b8c1-fd6a-4ac7-a870-da648abecb61");
+		logger.info("Starting login(UserPOJO client) method in dao.");
 		
-		if (client.getEmailID().equals(validateUser.getEmailID()) &&
-				client.getPassword().equals(validateUser.getPassword())) {
-			return validateUser;
-		}
-		*/
-
 		   try {
 	        	
 		        
 	        	String query = "SELECT * FROM bank_clients" + " WHERE email =?;";
-
+	        	logger.info("Connecting to DB.");
 	        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
 	            preparedStatement.setString(1, client.getEmailID());
 	            
@@ -153,23 +157,27 @@ public class UserDAOImpl implements UserDAO {
 	            
 	             // Process result from SQL query for login validation     
 	            if (validatedUser.getEmailID() != null && client.getPassword().equals(validatedUser.getPassword())) {
-
+	            	logger.info("Closing DB connection.");
+	            	db.connect().close();
 	                System.out.println("Your Login credential passed...");
+	                logger.info("Ending login(UserPOJO client) method in dao.");
                 	return validatedUser;
 
 	            } else {
+	            	logger.info("Closing DB connection.");
+	            	db.connect().close();
 	            	System.out.println("No results found.");
+	            	logger.info("Ending login(UserPOJO client) method in dao.");
 	            	return null;
 	            }
 
 
 	        } catch (SQLException e) {
-	        	// throw error for custom exception
-				System.out.println(e.getMessage());
-				System.out.println("");
-				e.printStackTrace();
+	        	logger.warn(e.getMessage());
+				System.out.println("Sorry a system error occured.");
+				System.out.println();
 	        }
-		
+		  logger.info("Ending login(UserPOJO client) method in dao.");
 		return null;
 	}
 }

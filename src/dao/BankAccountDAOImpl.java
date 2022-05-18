@@ -5,10 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import models.BankAccountPOJO;
 
 public class BankAccountDAOImpl implements BankAccountDAO {
 
+	private static final Logger logger = LogManager.getLogger(BankAccountDAOImpl.class);
 	Database db = Database.getInstance();
 	BankAccountPOJO bankAccount = new BankAccountPOJO();
 	
@@ -19,13 +23,13 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	
 	// initializes bank account details
 	public BankAccountDAOImpl(String bankAccountID) {
-		
+		logger.info("Starting BankAccountDAOImpl(String bankAccountID) method in dao.");
 		bankAccounts = new HashMap<Integer, BankAccountPOJO>();
 
 		  try {			  
 			  	
 	        	String query = "SELECT * FROM bank_accounts WHERE bank_id = ?";
-	        
+	        	logger.info("Starting DB connection.");
 	        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
 	            preparedStatement.setString(1, bankAccountID);
 
@@ -47,17 +51,18 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	            
 
 	            if(bankAccounts.size() > 0) {
+	            	logger.info("closing DB connection.");
 	            	db.connect().close();
 	            }
 	        	
 
 	        } catch (SQLException e) {
-	        	// throw error for custom exception
-				System.out.println(e.getMessage());
-				System.out.println("");
-				e.printStackTrace();
-	        }
 
+				System.out.println("Sorry for the system error. Please proceed or try later.");
+				logger.warn(e.getMessage());
+				System.out.println();
+	        }
+		  logger.info("Starting BankAccountDAOImpl(String bankAccountID) method in dao.");
 	}
 
 
@@ -65,6 +70,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	@Override
 	public boolean createAccount(String bankAccountID) {
 		
+		logger.info("Starting createAccount(String bankAccountID) method in dao.");
 		bankAccount = new BankAccountPOJO(bankAccountID);
 		
 		  try {
@@ -74,6 +80,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	        	        " (?, ?);";
 	        	
 	        	System.out.println(bankAccountID + " ---> " + bankAccount.getBalance());
+	        	logger.info("Starting DB connection.");  
 	        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
 	            preparedStatement.setString(1, bankAccountID);
 	            preparedStatement.setDouble(2, bankAccount.getBalance());
@@ -82,66 +89,72 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	        	int size = preparedStatement.executeUpdate();
 	           
 	           if (size == 0) {
+	        	   logger.info("Closing DB connection.");  
 	        	   db.connect().close();
 	        	   System.out.println("Fail to update Bank Account DB with Bank INFO :(");
 	        	   System.out.println();
+	        	   logger.info("Ending createAccount(String bankAccountID) method in dao."); 
 	        	   return false;
 	           } else {
+	        	   logger.info("Closing DB connection.");  
 	        	   db.connect().close();
 	               System.out.println("Your bank account has been created in the DB :)");
 	        	   System.out.println();
+	        	   logger.info("Ending createAccount(String bankAccountID) method in dao.");  
 	        	   return true;
 	           }
 
 	        } catch (SQLException e) {
-	        	// throw error for custom exception
-				System.out.println(e.getMessage());
-				System.out.println("");
-				e.printStackTrace();
+				System.out.println("Sorry for the system error. Please proceed or try later.");
+				logger.warn(e.getMessage());
+				System.out.println();
 	        }
-		  
+		  logger.info("Ending createAccount(String bankAccountID) method in dao.");  
 		return false;
 	}
 
 	// updates client's bank account after deposit
 	@Override
 	public void deposit(BankAccountPOJO bankAccount) {
-		
+		 logger.info("Starting deposit(BankAccountPOJO bankAccount) method in dao."); 
 		  try {
 		         
 	        	String query = "UPDATE bank_accounts SET balance=? WHERE account_id=?";
 	        	
 	        	
 	        	System.out.println("Processing your deposit....");
+	        	logger.info("Starting DB connection."); 
 	        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
 	        	preparedStatement.setDouble(1, bankAccount.getBalance());
 	        	preparedStatement.setInt(2, bankAccount.getAccountNumber());
 	        	
 	            // execute SQL query
 	        	int size = preparedStatement.executeUpdate();
-	           
+	        	
+	        	logger.info("Closing DB connection."); 
+	        	db.connect().close();
+	        	
 	           if (size == 0) {
-	        	   db.connect().close();
 	        	   System.out.println("Fail to update Bank Account DB with Bank INFO :(");
 	        	   System.out.println();
 	           } else {
-	        	   db.connect().close();
 	        	   System.out.println();
 	           }
 
 	        } catch (SQLException e) {
-	        	// throw error for custom exception
-				System.out.println(e.getMessage());
-				System.out.println("");
-				e.printStackTrace();
+				System.out.println("Sorry for the system error. Please proceed or try later.");
+				logger.warn(e.getMessage());
+				System.out.println();
 	        }
 		  
-
+		  logger.info("Ending deposit(BankAccountPOJO bankAccount) method in dao."); 
 	}
 
 	//Updates account balance upon withdrawals
 	@Override
 	public void withdraw(BankAccountPOJO bankAccount) {
+		
+		logger.info("Starting withdraw(BankAccountPOJO bankAccount) method in dao."); 
 		
 		  try {
 		         
@@ -149,36 +162,40 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	        	
 	        	
 	        	System.out.println("Processing your withdrawal....");
+	        	logger.info("Starting DB connection."); 
 	        	PreparedStatement preparedStatement = db.connect().prepareStatement(query);
 	        	preparedStatement.setDouble(1, bankAccount.getBalance());
 	        	preparedStatement.setInt(2, bankAccount.getAccountNumber());
 	        	
 	            // execute SQL query
 	        	int size = preparedStatement.executeUpdate();
+	        	
+	        	logger.info("Closing DB connection."); 
+	        	db.connect().close();
+
 	           
 	           if (size == 0) {
-	        	   db.connect().close();
 	        	   System.out.println("Fail to update Bank Account DB with Bank INFO :(");
 	        	   System.out.println();
 	           } else {
-	        	   db.connect().close();
 	        	   System.out.println();
 	           }
 
 	        } catch (SQLException e) {
-	        	// throw error for custom exception
-				System.out.println(e.getMessage());
-				System.out.println("");
-				e.printStackTrace();
+				System.out.println("Sorry for the system error. Please proceed or try later.");
+				logger.warn(e.getMessage());
+				System.out.println();
 	        }
 		  
-
+		  logger.info("Ending withdraw(BankAccountPOJO bankAccount) method in dao.");
 
 	}
 
 	// Gets list of bank accounts
 	@Override
 	public HashMap<Integer, BankAccountPOJO> getAccountBalance() {
+		logger.info("Starting getAccountBalance() method in dao.");
+		logger.info("Ending getAccountBalance() method in dao.");
 		return bankAccounts;
 		
 	}
