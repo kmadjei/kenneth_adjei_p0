@@ -21,7 +21,7 @@ public class UserDAOImpl implements UserDAO {
 		
 		
 
-		System.out.println("validate email");
+		System.out.println("validate email.....");
 		try {
 			
 			Connection conn = db.connect();
@@ -36,6 +36,7 @@ public class UserDAOImpl implements UserDAO {
 			ResultSet result = statement.executeQuery(query);
 			
 			if(result.next()) { 
+				System.out.println("Email already exist in database!");
 				System.out.println("Email - " + result.getString("email"));
 				return true;
 			}

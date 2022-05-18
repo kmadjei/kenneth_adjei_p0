@@ -431,9 +431,9 @@ public class BankApplicationSystem {
 		
 		
 		System.out.println();
-		System.out.println("****************************************");
+		System.out.println("**********************************************");
 		System.out.println("Choose An Account Number For Your Withdrawal!");
-		System.out.println("****************************************");
+		System.out.println("***********************************************");
 		System.out.println();
 
 		// grab all account info from db with total
